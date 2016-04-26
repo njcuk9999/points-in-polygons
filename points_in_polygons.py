@@ -5,7 +5,7 @@ import matplotlib.path as mplPath
 
 
 # =============================================================================
-# Define grid functions
+# Define functions
 # =============================================================================
 # count the number of points inside a list of "polygon collections"
 def count_objects_inside(polygons, xarr, yarr, polygons_in=None,
