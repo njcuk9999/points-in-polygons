@@ -135,7 +135,7 @@ def count_objects_inside(polygons, xarr, yarr, polygons_in=None,
 # Start of code
 # =============================================================================
 if __name__ == '__main__':
-    xmin, xmax, ymin, ymax, total = -2, 8.5, -2, 8.5, 50000
+    xmin, xmax, ymin, ymax, total = -2, 8.5, -2, 8.5, 25000
     # create some polygons
     # polygons = [polygon1, polygon2, ... polygonN]
     # polygon1 = [vertexset1, vertexset2, ... vertexsetN]
