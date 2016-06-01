@@ -52,59 +52,51 @@ Points are defined by xarr, yarr such that we look whether
 
 ### Example of use
 
-    Example of use:
-    
-    ```python
-    if __name__ == '__main__':
-    xmin, xmax, ymin, ymax, total = -2, 8.5, -2, 8.5, 25000
-    # create some polygons
-    # polygons = [polygon1, polygon2, ... polygonN]
-    # polygon1 = [vertexset1, vertexset2, ... vertexsetN]
-    # vertexset1 = [(x0, y0), (x1, y1), ..., (xN, yN)]
-    # This should produce two polygons (a diamond with a diamond hole and a
-    # rectangle with a rectangle hole)
-    my_polygons = [[[(0, -1), (-1, 0), (0, 1), (1, 0)],
-                    [(0, -0.7), (-0.7, 0), (0, 0.7), (0.7, 0.0)]],
-                   [[(2, 2), (8, 2), (8, 8), (2, 8)],
-                    [(4, 4), (4, 5), (5, 5), (5, 4)]]]
-    # define whether polygons are inside any other polygon
-    # polygons_in = [polygon_in1, polygon_in2, ..., polygon_inN]
-    # polygon_in1 = [True, False, ..., True]
-    my_polygons_in = [[False, True], [False, True]]
-    # create random grid of points
-    xs = np.random.uniform(xmin, xmax, total)
-    ys = np.random.uniform(ymin, ymax, total)
-    # uses the count function
-    args = [my_polygons, xs, ys, my_polygons_in]
-    count, xpoints, ypoints = count_objects_inside(*args, include_holes=False)
-    # plots a graphical representation of the function
-    plt.close()
-    fig, frame = plt.subplots(ncols=1, nrows=1)
-    # loop around my_polygons and plot them in blue (unless they are "inside"
-    # then plot them in white)
-    for ki, my_polygon in enumerate(my_polygons):
-        for ji, my_vertices in enumerate(my_polygon):
-            if my_polygons_in[ki][ji]:
-                p = mpatch.Polygon(my_vertices, color='w', zorder=2)
-            else:
-                p = mpatch.Polygon(my_vertices, color='b', zorder=1)
-            frame.add_artist(p)
-    # add the original points to the plot in black
-    frame.scatter(xs, ys, color='k', zorder=3)
-    # loop round xpoints and plot them in red
-    for ii in range(len(xpoints)):
-        frame.scatter(xpoints[ii], ypoints[ii], color='r', zorder=4)
-    # display the number of points as the title
-    args = [np.sum(count), len(xs.flatten())]
-    msg = 'There are {0}/{1} points inside the area occupied by the polygons'
-    plt.title(msg.format(*args))
-    # force the limits of the axis to the size of the points
-    plt.xlim(xmin, xmax)
-    plt.ylim(ymin, ymax)
-    # finally show and close our figure
-    plt.show()
-    plt.close()
-    ```
+```python
+xmin, xmax, ymin, ymax, total = -2, 8.5, -2, 8.5, 25000
+# create some polygons
+# polygons = [polygon1, polygon2, ... polygonN]
+# polygon1 = [vertexset1, vertexset2, ... vertexsetN]
+# vertexset1 = [(x0, y0), (x1, y1), ..., (xN, yN)]
+# This should produce two polygons (a diamond with a diamond hole and a
+# rectangle with a rectangle hole)
+my_polygons = [[[(0, -1), (-1, 0), (0, 1), (1, 0)],
+                [(0, -0.7), (-0.7, 0), (0, 0.7), (0.7, 0.0)]],
+               [[(2, 2), (8, 2), (8, 8), (2, 8)],
+                [(4, 4), (4, 5), (5, 5), (5, 4)]]]
+# define whether polygons are inside any other polygon
+# polygons_in = [polygon_in1, polygon_in2, ..., polygon_inN]
+# polygon_in1 = [True, False, ..., True]
+my_polygons_in = [[False, True], [False, True]]
+# create random grid of points
+xs = np.random.uniform(xmin, xmax, total)
+ys = np.random.uniform(ymin, ymax, total)
+# uses the count function
+args = [my_polygons, xs, ys, my_polygons_in]
+mask = mask_from_polygons(*args)
+# plots a graphical representation of the function
+plt.close()
+fig, frame = plt.subplots(ncols=1, nrows=1)
+# loop around my_polygons and plot them in blue (unless they are "inside"
+# then plot them in white)
+for ki, my_polygon in enumerate(my_polygons):
+    for ji, my_vertices in enumerate(my_polygon):
+        if my_polygons_in[ki][ji]:
+            p = mpatch.Polygon(my_vertices, color='w', zorder=2)
+        else:
+            p = mpatch.Polygon(my_vertices, color='b', zorder=1)
+        frame.add_artist(p)
+# add the original points to the plot in black
+frame.scatter(xs, ys, color='k', zorder=3)
+# plot the masked points
+frame.scatter(xs[mask], ys[mask], color='r', zorder=4)
+# force the limits of the axis to the size of the points
+plt.xlim(xmin, xmax)
+plt.ylim(ymin, ymax)
+# finally show and close our figure
+plt.show()
+plt.close()
+```
 
 # points-in-polygons
 
