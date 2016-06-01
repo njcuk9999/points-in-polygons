@@ -60,6 +60,7 @@ Points are defined by xarr, yarr such that we look whether
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatch
 
 xmin, xmax, ymin, ymax, total = -2, 8.5, -2, 8.5, 25000
 # create some polygons
@@ -180,6 +181,7 @@ Points are defined by xarr, yarr such that we look whether
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatch
 
 xmin, xmax, ymin, ymax, total = -2, 8.5, -2, 8.5, 25000
 # create some polygons
