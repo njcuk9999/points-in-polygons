@@ -1,7 +1,7 @@
 # mask from polygons
 
 ```python
-mask_from_polygons(xarr, yarr, polygons, polygons_in):
+mask_from_polygons(xarr, yarr, polygons, polygons_in, include_holes=True):
 ```
 
 Takes a list of polygons and returns a array of bools (mask) where [i]
@@ -46,9 +46,14 @@ Points are defined by xarr, yarr such that we look whether
                         where:
 
                         polygon_in = [True, False, ..., True]
+                        
+    :param include_holes: bool, whether we count polygons that lie inside
+                          (i.e. have polygons_in[i][j] = True) as holes
+                          and thus points inside these polygons are not
+                          counted as inside the polygons
 
-
-    :return insideany: array of bools for, mask True where xarr[i] and yarr[i] are inside the polygon
+    :return ms: list of arrays (length of polygons), each array is an array of 
+                bools for, a mask  True where xarr[i] and yarr[i] are inside the polygon
 
 ### Example of use
 
@@ -72,8 +77,8 @@ my_polygons_in = [[False, True], [False, True]]
 xs = np.random.uniform(xmin, xmax, total)
 ys = np.random.uniform(ymin, ymax, total)
 # uses the count function
-args = [my_polygons, xs, ys, my_polygons_in]
-mask = mask_from_polygons(*args)
+args = [xs, ys, my_polygons, my_polygons_in]
+masks = mask_from_polygons(*args, include_holes=False)
 # plots a graphical representation of the function
 plt.close()
 fig, frame = plt.subplots(ncols=1, nrows=1)
@@ -89,7 +94,8 @@ for ki, my_polygon in enumerate(my_polygons):
 # add the original points to the plot in black
 frame.scatter(xs, ys, color='k', zorder=3)
 # plot the masked points
-frame.scatter(xs[mask], ys[mask], color='r', zorder=4)
+for mask in masks:
+  frame.scatter(xs[mask], ys[mask], color='r', zorder=4)
 # force the limits of the axis to the size of the points
 plt.xlim(xmin, xmax)
 plt.ylim(ymin, ymax)
