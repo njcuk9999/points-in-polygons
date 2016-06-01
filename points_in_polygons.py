@@ -93,7 +93,10 @@ def mask_from_polygons(xarr, yarr, polygons, polygons_in):
           # -----------------------------------------------------------------
           # if polygon is inside another polygon (as defined by poly_in)
           # do not count it as inside
-          insideany |= inside
+          if poly_in and not include_holes:
+              insideany &= ~inside
+          else:
+              insideany |= inside
           # -----------------------------------------------------------------
   return insideany
 
