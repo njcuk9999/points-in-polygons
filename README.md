@@ -58,6 +58,9 @@ Points are defined by xarr, yarr such that we look whether
 ### Example of use
 
 ```python
+import numpy as np
+import matplotlib.pyplot as plt
+
 xmin, xmax, ymin, ymax, total = -2, 8.5, -2, 8.5, 25000
 # create some polygons
 # polygons = [polygon1, polygon2, ... polygonN]
@@ -175,7 +178,9 @@ Points are defined by xarr, yarr such that we look whether
 ### Example of use:
 
 ```python
-if __name__ == '__main__':
+import numpy as np
+import matplotlib.pyplot as plt
+
 xmin, xmax, ymin, ymax, total = -2, 8.5, -2, 8.5, 25000
 # create some polygons
 # polygons = [polygon1, polygon2, ... polygonN]
