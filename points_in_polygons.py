@@ -7,6 +7,96 @@ import matplotlib.path as mplPath
 # =============================================================================
 # Define functions
 # =============================================================================
+def mask_from_polygons(xarr, yarr, polygons, polygons_in):
+  """
+  Takes a list of polygons and returns a array of bools (mask) where [i]
+  is True if xarr[i] and yarr[i] are inside all polygons.
+  
+  Points are defined by xarr, yarr such that we look whether
+    (xarr[i], yarr[i]) is contained in the polygons.
+    
+  :param polygons: list of polygon objects, a polygon collection: this is
+                   the list or array of polygons, each polygon should be
+                   a list of arrays that contain a set of vertices each
+                   with a list of (x, y) coordinates:
+
+                   polygons = [polygon1, polygon2, ... , polygonN]
+
+                   where:
+
+                   polygon1 = [vertexlist1, vertexlist2, ..., vertexlistN]
+
+                   vertexlist1 = [(x0, y0), (x1, y1), ...., (xN, yN)]
+
+                   i.e. a single polygon (a square) could be:
+                       [[[(0, 0), (1, 0), (1, 1), (0, 1)]]]
+
+  :param xarr: array of floats, x coordinates for points
+               (same length as yarr)
+  :param yarr: array of floats, y coordinates for points
+               (same length as xarr)
+
+  :param polygons_in: Array of bools Same shape as polygons
+                      (except no vertices). This controls whether a polygon
+                      is "inside" another polygon if include_holes is False
+                      we assume any polygon with polygon_in = True is a hole
+                      and thus the count should take these points as NOT
+                      being in the polygons.
+
+                      polygons_in = None
+
+                      polygons_in = [polygon_in1, polygon_in2, ...,
+                                     polygon_inN]
+
+                      where:
+
+                      polygon_in = [True, False, ..., True]
+
+
+  :return insideany: array of bools for, mask True where xarr[i] and yarr[i] are inside the polygon
+  """
+  xyarr = np.array(zip(xarr, yarr))
+  falsearray = np.array([False] * len(xarr), dtype=bool)
+  insideany = falsearray.copy()
+  for k in range(len(polygons)):
+      polygon = polygons[k]
+      # +++++++++++++++++++++++++++++++++++++++++++++
+      # deal with annoying contained polygons
+      if polygons_in is None:
+          polygon_in = None
+      else:
+          polygon_in = polygons_in[k]
+      # +++++++++++++++++++++++++++++++++++++++++++++
+      for j in range(len(polygon)):
+          poly = polygon[j]
+          # mask out the points outside the poly clip box
+          pmax_x, pmax_y = np.max(poly, axis=0)
+          pmin_x, pmin_y = np.min(poly, axis=0)
+          mask1 = (xarr > pmin_x) & (xarr < pmax_x)
+          mask2 = (yarr > pmin_y) & (yarr < pmax_y)
+          mask = mask1 & mask2
+          # if no points inside poly clip box then don't bother counting
+          if len(mask[mask]) == 0:
+              continue
+          # -----------------------------------------------------------------
+          # deal with annoying contained polygons
+          if polygon_in is None:
+              poly_in = False
+          else:
+              poly_in = polygon_in[j]
+          # -----------------------------------------------------------------
+          # Creates a mask for points (xs, ys) based on whether they are
+          # inside a polygon poly from http://stackoverflow.com/a/23453678
+          bbPath = mplPath.Path(poly)
+          inside = falsearray.copy()
+          inside[mask] = bbPath.contains_points(xyarr[mask])
+          # -----------------------------------------------------------------
+          # if polygon is inside another polygon (as defined by poly_in)
+          # do not count it as inside
+          insideany |= inside
+          # -----------------------------------------------------------------
+  return insideany
+
 # count the number of points inside a list of "polygon collections"
 def count_objects_inside(polygons, xarr, yarr, polygons_in=None,
                          include_holes=True):
